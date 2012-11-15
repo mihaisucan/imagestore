@@ -20,8 +20,6 @@ except ImportError:
 
 from imagestore.utils import get_file_path, get_model_string
 
-from menus.utils import simple_language_changer
-
 SELF_MANAGE = getattr(settings, 'IMAGESTORE_SELF_MANAGE', True)
 
 
@@ -53,7 +51,6 @@ class BaseAlbum(models.Model):
             else:
                 return None
 
-    @simple_language_changer
     @permalink
     def get_absolute_url(self):
         return 'image-album', (), {'album_id': self.id}

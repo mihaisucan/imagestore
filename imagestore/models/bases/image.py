@@ -23,7 +23,6 @@ except ImportError:
 
 from imagestore.utils import get_file_path, get_model_string, load_class
 
-from menus.utils import simple_language_changer
 
 
 
@@ -48,7 +47,6 @@ class BaseImage(models.Model):
     updated = models.DateTimeField(_('Updated'), auto_now=True, null=True)
     album = models.ForeignKey(get_model_string('Album'), verbose_name=_('Album'), null=True, blank=True, related_name='images')
 
-    @simple_language_changer
     @permalink
     def get_absolute_url(self):
         return 'image-view', (), {'pk': self.id}

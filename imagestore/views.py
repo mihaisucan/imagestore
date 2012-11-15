@@ -17,6 +17,7 @@ from tagging.utils import get_tag
 from django.contrib.contenttypes.models import ContentType
 from utils import load_class
 from django.db.models import Q
+from menus.utils import simple_language_changer
 
 IMAGESTORE_IMAGES_ON_PAGE = getattr(settings, 'IMAGESTORE_IMAGES_ON_PAGE', 20)
 
@@ -45,6 +46,9 @@ class AlbumListView(ListView):
         context.update(self.e_context)
         return context
 
+    @method_decorator(simple_language_changer)
+    def dispatch(self, *args, **kwargs):
+        return super(AlbumListView, self).dispatch(*args, **kwargs)
 
 def get_images_queryset(self):
     images = Image.objects.all()
@@ -82,6 +86,10 @@ class ImageListView(ListView):
         context = super(ImageListView, self).get_context_data(**kwargs)
         context.update(self.e_context)
         return context
+
+    @method_decorator(simple_language_changer)
+    def dispatch(self, *args, **kwargs):
+        return super(ImageListView, self).dispatch(*args, **kwargs)
 
 
 class ImageView(DetailView):
@@ -128,6 +136,9 @@ class ImageView(DetailView):
         context.update(self.e_context)
         return context
 
+    @method_decorator(simple_language_changer)
+    def dispatch(self, *args, **kwargs):
+        return super(ImageView, self).dispatch(*args, **kwargs)
 
 class CreateAlbum(CreateView):
     template_name = 'imagestore/forms/album_form.html'
