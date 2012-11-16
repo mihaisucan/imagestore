@@ -25,7 +25,6 @@ from imagestore.utils import get_file_path, get_model_string, load_class
 
 
 
-
 SELF_MANAGE = getattr(settings, 'IMAGESTORE_SELF_MANAGE', True)
 
 
@@ -49,7 +48,7 @@ class BaseImage(models.Model):
 
     @permalink
     def get_absolute_url(self):
-        return 'image-view', (), {'pk': self.id}
+        return 'imagestore-image', (), {'pk': self.id}
 
     def __unicode__(self):
         return '%s'% self.id
