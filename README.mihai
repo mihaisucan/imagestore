@@ -1,0 +1,21 @@
+This is a fork of Imagestore that adds support for multilanguage.
+
+The changes you see here are minimal and they were made only to avoid problems
+with URL namespaces and django-cms failing to find the correct page in
+multilanguage configurations.
+
+Client site projects are private. They include:
+- a modeltranslation for imagestore;
+- a sitemap.py with multilanguage support;
+- a search_indexes.py that is used with django-haystack (multilanguage-aware);
+- my own django-cms integration (cms_app.py and menu.py);
+- my own urls.py.
+
+The above code is not yet included here - I kept it out of the imagestore
+project to avoid forking. In the end I couldn't avoid forking. I will have to
+consolidate all the changes and move those files into this fork. I will do this,
+some day. If you want/need it, email me.
+
+Overall: I found adding multilanguage support to be a mess for existing apps.
+The better approach is to use something like django-hvad, but that means more
+forking / more work.
