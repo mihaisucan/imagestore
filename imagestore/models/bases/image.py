@@ -3,7 +3,7 @@
 
 __author__ = 'zeus'
 
-
+import datetime
 from django.db import models
 from django.db.models import permalink
 from sorl.thumbnail.helpers import ThumbnailError
@@ -15,6 +15,7 @@ from django.contrib.auth.models import User, Permission
 from django.db.models.signals import post_save
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
+import zinnia
 
 try:
     import Image as PILImage
@@ -42,16 +43,21 @@ class BaseImage(models.Model):
     order = models.IntegerField(_('Order'), default=0)
     image = ImageField(verbose_name = _('File'), upload_to=get_file_path)
     user = models.ForeignKey(User, verbose_name=_('User'), null=True, blank=True, related_name='images')
-    created = models.DateTimeField(_('Created'), auto_now_add=True, null=True)
+    created = models.DateTimeField(_('Created'), default=datetime.datetime.now, blank=True, null=True)
     updated = models.DateTimeField(_('Updated'), auto_now=True, null=True)
     album = models.ForeignKey(get_model_string('Album'), verbose_name=_('Album'), null=True, blank=True, related_name='images')
     featured = models.BooleanField(_('Featured'), help_text=_('This image will be included in slideshows.'))
+    related_images = models.ManyToManyField('self', blank=True)
+    related_articles = models.ManyToManyField(zinnia.models.Entry, \
+            related_name='related_images', blank=True)
 
     @permalink
     def get_absolute_url(self):
         return 'imagestore-image', (), {'pk': self.id}
 
     def __unicode__(self):
+        if self.title and len(self.title) > 0:
+            return self.title
         return '%s'% self.id
 
     def admin_thumbnail(self):
