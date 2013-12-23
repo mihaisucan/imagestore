@@ -35,6 +35,7 @@ class BaseAlbum(models.Model):
 
     user = models.ForeignKey(User, verbose_name=_('User'), null=True, blank=True, related_name='albums')
     name = models.CharField(_('Name'), max_length=100, blank=False, null=False)
+    slug = models.SlugField(help_text=_('used for the album URL'), unique=True, max_length=255)
     created = models.DateTimeField(_('Created'), auto_now_add=True)
     updated = models.DateTimeField(_('Updated'), auto_now=True)
     is_public = models.BooleanField(_('Is public'), default=True)
@@ -55,7 +56,7 @@ class BaseAlbum(models.Model):
 
     @permalink
     def get_absolute_url(self):
-        return 'imagestore-album', (), {'album_id': self.id}
+        return 'imagestore-album', (), {'album_slug': self.slug}
 
     def __unicode__(self):
         return self.name

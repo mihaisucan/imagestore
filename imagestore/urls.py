@@ -19,7 +19,7 @@ urlpatterns = patterns('imagestore.views',
 
 
                        url(r'^album/add/$', CreateAlbum.as_view(), name='create-album'),
-                       url(r'^album/(?P<album_id>\d+)/$', ImageListView.as_view(), name='album'),
+                       url(r'^album/(?P<album_slug>[^/]+)/$', ImageListView.as_view(), name='album'),
                        url(r'^album/(?P<pk>\d+)/edit/$', UpdateAlbum.as_view(), name='update-album'),
                        url(r'^album/(?P<pk>\d+)/delete/$', DeleteAlbum.as_view(), name='delete-album'),
 
@@ -30,14 +30,11 @@ urlpatterns = patterns('imagestore.views',
 
                        url(r'^upload/$', CreateImage.as_view(), name='upload'),
 
-                       url(r'^image/(?P<pk>\d+)/$', ImageView.as_view(), name='image'),
-                       url(r'^album/(?P<album_id>\d+)/image/(?P<pk>\d+)/$', ImageView.as_view(), name='image-album'),
-                       url(r'^tag/(?P<tag>[^/]+)/image/(?P<pk>\d+)/$', ImageView.as_view(), name='image-tag'),
+                       url(r'^image/(?P<slug>[^/]+)/$', ImageView.as_view(), name='image'),
+                       url(r'^album/(?P<album_slug>[^/]+)/image/(?P<slug>[^/]+)/$', ImageView.as_view(), name='image-album'),
+                       url(r'^tag/(?P<tag>[^/]+)/image/(?P<slug>[^/]+)/$', ImageView.as_view(), name='image-tag'),
                        url(r'^image/(?P<pk>\d+)/delete/$', DeleteImage.as_view(), name='delete-image'),
                        url(r'^image/(?P<pk>\d+)/update/$', UpdateImage.as_view(), name='update-image'),
 
                        url(r'^autocomplete/(.*)/$', autocomletes, name='autocomplete')
                        )
-
-
-

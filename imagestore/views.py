@@ -59,8 +59,8 @@ def get_images_queryset(self):
         user = get_object_or_404(User, username=self.kwargs['username'])
         self.e_context['view_user'] = user
         images = images.filter(user=user)
-    if 'album_id' in self.kwargs:
-        album = get_object_or_404(Album, id=self.kwargs['album_id'])
+    if 'album_slug' in self.kwargs:
+        album = get_object_or_404(Album, slug=self.kwargs['album_slug'])
         self.e_context['album'] = album
         images = images.filter(album=album)
         if (not album.is_public) and\

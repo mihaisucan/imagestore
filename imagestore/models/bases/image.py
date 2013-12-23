@@ -32,12 +32,13 @@ SELF_MANAGE = getattr(settings, 'IMAGESTORE_SELF_MANAGE', True)
 class BaseImage(models.Model):
     class Meta(object):
         abstract = True
-        ordering = ('order', 'id')
+        ordering = ('order', 'created', 'title', 'id')
         permissions = (
             ('moderate_images', 'View, update and delete any image'),
         )
 
     title = models.CharField(_('Title'), max_length=100, blank=True, null=True)
+    slug = models.SlugField(help_text=_('used for the image URL'), unique=True, max_length=255)
     description = models.TextField(_('Description'), blank=True, null=True)
     tags = TagField(_('Tags'), blank=True)
     order = models.IntegerField(_('Order'), default=0)
@@ -53,11 +54,13 @@ class BaseImage(models.Model):
 
     @permalink
     def get_absolute_url(self):
-        return 'imagestore-image', (), {'pk': self.id}
+        return 'imagestore-image', (), {'slug': self.slug}
 
     def __unicode__(self):
         if self.title and len(self.title) > 0:
             return self.title
+        if self.slug and len(self.slug) > 0:
+            return self.slug
         return '%s'% self.id
 
     def admin_thumbnail(self):
