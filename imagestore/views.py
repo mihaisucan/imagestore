@@ -105,6 +105,8 @@ class ImageView(DetailView):
             Q(order__lt=image.order)|
             Q(id__lt=image.id, order=image.order)
         ).count()
+        context['first'] = base_qs[0]
+        context['last'] = base_qs[count-1]
         next = None
         previous = None
         if count - 1 > img_pos:
