@@ -18,7 +18,7 @@ try:
 except ImportError:
     from PIL import Image as PILImage
 
-from imagestore.utils import get_file_path, get_model_string
+from imagestore.utils import get_model_string
 
 
 

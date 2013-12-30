@@ -22,11 +22,12 @@ try:
 except ImportError:
     from PIL import Image as PILImage
 
-from imagestore.utils import get_file_path, get_model_string, load_class
+from imagestore.utils import get_model_string, load_class
 
 
 
 SELF_MANAGE = getattr(settings, 'IMAGESTORE_SELF_MANAGE', True)
+UPLOAD_TO = getattr(settings, 'IMAGESTORE_UPLOAD_TO', 'imagestore/')
 
 
 class BaseImage(models.Model):
@@ -42,7 +43,7 @@ class BaseImage(models.Model):
     description = models.TextField(_('Description'), blank=True, null=True)
     tags = TagField(_('Tags'), blank=True)
     order = models.IntegerField(_('Order'), default=0)
-    image = ImageField(verbose_name = _('File'), upload_to=get_file_path)
+    image = ImageField(verbose_name = _('File'), upload_to=UPLOAD_TO)
     user = models.ForeignKey(User, verbose_name=_('User'), null=True, blank=True, related_name='images')
     created = models.DateTimeField(_('Created'), default=datetime.datetime.now, blank=True, null=True)
     updated = models.DateTimeField(_('Updated'), auto_now=True, null=True)

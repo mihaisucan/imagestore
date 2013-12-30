@@ -3,13 +3,9 @@
 
 __author__ = 'zeus'
 
-import os
-import uuid
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.importlib import import_module
 from django.conf import settings
-
-UPLOAD_TO = getattr(settings, 'IMAGESTORE_UPLOAD_TO', 'imagestore/')
 
 def load_class(class_path, setting_name=None):
     """
@@ -61,8 +57,3 @@ def get_model_string(model_name):
     else:
         klass = load_class(class_path)
         return '%s.%s' % (klass._meta.app_label, klass.__name__)
-
-def get_file_path(instance, filename):
-    ext = filename.split('.')[-1]
-    filename = "%s.%s" % (uuid.uuid4(), ext)
-    return os.path.join(UPLOAD_TO, filename)

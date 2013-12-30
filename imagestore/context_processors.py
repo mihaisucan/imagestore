@@ -14,10 +14,10 @@ def imagestore_processor(request):
         'IMAGESTORE_MODEL_STRING': get_model_string('Image'),
         'IMAGESTORE_LOAD_CSS': getattr(settings, 'IMAGESTORE_LOAD_CSS', True),
         }
-    try:
-        ret['imagestore_index_url'] = reverse('imagestore:index')
-    except NoReverseMatch: #Bastard django-cms from hell!!!!111
-        pass
+    #try:
+    #    ret['imagestore_index_url'] = reverse('imagestore:index')
+    #except NoReverseMatch: #Bastard django-cms from hell!!!!111
+    #    pass
     if template:
         ret['IMAGESTORE_TEMPLATE'] = template
     ret['imagestore_perms'] = {
@@ -25,5 +25,3 @@ def imagestore_processor(request):
         'add_album': request.user.has_perm('%s.add_%s' % (album_applabel, album_classname)),
     }
     return ret
-
-  
