@@ -21,7 +21,7 @@ except ImportError:
 from imagestore.utils import get_model_string
 
 
-
+ALBUMS_IN_ROOT_MENU = getattr(settings, 'ALBUMS_IN_ROOT_MENU', {})
 SELF_MANAGE = getattr(settings, 'IMAGESTORE_SELF_MANAGE', True)
 
 
@@ -56,7 +56,10 @@ class BaseAlbum(models.Model):
 
     @permalink
     def get_absolute_url(self):
-        return 'imagestore-album', (), {'album_slug': self.slug}
+        view_name = 'imagestore-album'
+        if self.slug in ALBUMS_IN_ROOT_MENU:
+            view_name = view_name.replace('imagestore-', 'root-', 1)
+        return view_name, (), {'album_slug': self.slug}
 
     def __unicode__(self):
         return self.name
