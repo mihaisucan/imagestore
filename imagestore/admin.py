@@ -24,6 +24,8 @@ def form_factory(form_model):
                     title = self.cleaned_data['title']
                 elif 'name' in self.cleaned_data:
                     title = self.cleaned_data['name']
+                else:
+                    raise Exception(_(u'Form model "%s" has no "title" or "name" fields.' % form_model))
                 slug = slugify(title)
             if len(slug) == 0:
                 slug = slugify('%s-%s' % (self.instance.pk, datetime.datetime.now()))
@@ -34,15 +36,17 @@ def form_factory(form_model):
 
 class InlineImageAdmin(AdminInlineImageMixin, admin.TabularInline):
     model = Image
-    fieldsets = ((None, {'fields': ['image', 'title', 'slug', 'featured', 'tags', 'order', 'created']}),)
+    fieldsets = ((None, {'fields': ['image', 'title', 'slug', 'tags', 'featured', 'created']}),)
     extra = 0
 
 class AlbumAdmin(admin.ModelAdmin):
     form = form_factory(Album)
     fieldsets = ((None, {'fields': ['name', 'slug', 'is_public', 'order', 'user']}),)
-    list_display = ('admin_thumbnail', 'name', 'user', 'created', 'updated', 'is_public', 'order')
-    list_editable = ('order', 'is_public', 'name')
+    date_hierarchy = 'created'
+    list_display = ('admin_thumbnail', 'name', 'slug', 'created', 'updated', 'is_public')
+    list_editable = ('is_public', 'name', 'slug')
     prepopulated_fields = {"slug": ("name",)}
+    list_filter = ('is_public', 'user')
     inlines = [InlineImageAdmin]
 
 admin.site.register(Album, AlbumAdmin)
@@ -53,12 +57,12 @@ class ImageAdmin(admin.ModelAdmin):
     fieldsets = (
             (None, {'fields': ['title', 'slug', 'image', 'description', 'featured', 'tags', 'album']}),
             (_('Advanced options'), {'fields': ['related_images', 'related_articles', 'created', 'user', 'order'], 'classes': ['collapse']}))
-    list_display = ('admin_thumbnail', 'title', 'featured', 'album', 'tags', 'order',  'created')
-    list_filter = ('album', 'featured')
-    list_editable = ('title', 'album', 'featured', 'tags', 'order', 'created')
+    list_display = ('admin_thumbnail', 'album', 'title', 'slug', 'tags',  'created', 'featured')
+    list_filter = ('album', 'featured', 'user')
+    list_editable = ('title', 'slug', 'album', 'featured', 'tags', 'created')
     raw_id_fields = ('user', )
     filter_horizontal = ('related_images', 'related_articles')
-    search_fields = ('title', 'album__name', 'description', 'tags')
+    search_fields = ('title', 'album__name', 'description', 'tags', 'slug')
     prepopulated_fields = {"slug": ("title",)}
 
 
