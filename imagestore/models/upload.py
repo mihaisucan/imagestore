@@ -3,6 +3,7 @@
 
 __author__ = 'zeus'
 
+import re
 import os
 import zipfile
 from django.db import models
@@ -10,6 +11,8 @@ from imagestore.utils import load_class, get_model_string
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.core.files.base import ContentFile
+from django.template.defaultfilters import slugify
+
 try:
     import Image as PILImage
 except ImportError:
@@ -18,6 +21,17 @@ except ImportError:
 from imagestore.models import Album, Image
 
 TEMP_DIR = getattr(settings, 'TEMP_DIR', 'temp/')
+
+def pretty_title(original):
+    s = original
+    if ' ' not in s:
+        s = re.sub(r'[-_]+', ' ', s)
+    else:
+        s = re.sub(r'([a-z])([A-Z])', r'\1 \2', s)
+    if s != original:
+        return s.capitalize()
+    return original
+
 
 class AlbumUpload(models.Model):
     """
@@ -80,7 +94,9 @@ class AlbumUpload(models.Model):
                     except Exception:
                         # if a "bad" file is found we just skip it.
                         continue
-                    img = Image(album=album)
+                    title = pretty_title(os.path.splitext(filename)[0])
+                    slug = slugify(title)
+                    img = Image(album=album, title=title, slug=slug)
                     img.image.save(filename, ContentFile(data))
                     img.save()
             zip.close()
