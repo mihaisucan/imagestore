@@ -67,7 +67,7 @@ def get_images_queryset(self):
            (self.request.user != album.user) and\
            (not self.request.user.has_perm('imagestore.moderate_albums')):
             raise PermissionDenied
-    return images
+    return images.order_by('order', '-created', '-id')
 
 
 class ImageListView(ListView):
@@ -101,32 +101,54 @@ class ImageView(DetailView):
                 raise PermissionDenied
         base_qs = self.get_queryset()
         count = base_qs.count()
-        img_pos = base_qs.filter(
-            Q(order__lt=image.order)|
-            Q(id__lt=image.id, order=image.order)
-        ).count()
-        context['first'] = base_qs[0]
-        context['last'] = base_qs[count-1]
+        first = None
+        last = None
+        if count > 1:
+            first = base_qs[0]
+            last = base_qs[count-1]
+
         next = None
         previous = None
-        if count - 1 > img_pos:
-            try:
-                next = base_qs.filter(
-                    Q(order__gt=image.order)|
-                    Q(id__gt=image.id, order=image.order)
-                )[0]
-            except IndexError:
-                pass
-        if img_pos > 0:
-            try:
-                previous = base_qs.filter(
-                    Q(order__lt=image.order)|
-                    Q(id__lt=image.id, order=image.order)
-                ).order_by('-order', '-id')[0]
-            except IndexError:
-                pass
+        next_siblings = base_qs.filter(order__gte=image.order, \
+                created__lte=image.created).exclude(pk=image.pk)
+
+        try:
+            next = next_siblings[0]
+        except IndexError:
+            pass
+
+        if next is None:
+            next = first
+
+        next_siblings = next_siblings[:3].values_list('id', flat=True)
+
+        previous_siblings = base_qs.order_by('-order', 'created', 'id') \
+                .filter(order__lte=image.order, created__gte=image.created) \
+                .exclude(pk=image.pk)
+
+        try:
+            previous = previous_siblings[0]
+        except IndexError:
+            pass
+
+        if previous is None:
+            previous = last
+
+        if previous and next and previous.pk is next.pk:
+            if previous.pk is last.pk:
+                previous = None
+            if next.pk is first.pk:
+                next = None
+
+        previous_siblings = previous_siblings[:3].values_list('id', flat=True)
+
+        context['first'] = first
+        context['last'] = last
         context['next'] = next
         context['previous'] = previous
+        context['next_siblings'] = next_siblings
+        context['previous_siblings'] = previous_siblings
+
         context.update(self.e_context)
         return context
 

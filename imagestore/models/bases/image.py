@@ -33,7 +33,7 @@ UPLOAD_TO = getattr(settings, 'IMAGESTORE_UPLOAD_TO', 'imagestore/')
 class BaseImage(models.Model):
     class Meta(object):
         abstract = True
-        ordering = ('order', 'created', 'title', 'id')
+        ordering = ('order', 'created',  'id')
         permissions = (
             ('moderate_images', 'View, update and delete any image'),
         )
