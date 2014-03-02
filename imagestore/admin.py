@@ -5,6 +5,8 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
 from django.forms import ModelForm
+from django.db import models
+from wymeditor.widgets import WYMEditor
 import datetime
 
 def form_factory(form_model):
@@ -64,6 +66,9 @@ class ImageAdmin(admin.ModelAdmin):
     filter_horizontal = ('related_images', 'related_articles')
     search_fields = ('title', 'album__name', 'description', 'tags', 'slug')
     prepopulated_fields = {"slug": ("title",)}
+    formfield_overrides = {
+        models.TextField: {'widget': WYMEditor},
+    }
 
 
 class AlbumUploadAdmin(admin.ModelAdmin):
